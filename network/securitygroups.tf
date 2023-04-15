@@ -63,7 +63,7 @@ resource "aws_security_group_rule" "allow-mysql" {
     to_port = 3306
     protocol = "tcp"
     security_group_id = aws_security_group.rds-app-prod.id
-    cidr_blocks = [ aws_subnet.PrivateSubnet1.cidr_block ]
+    cidr_blocks = [ aws_subnet.PrivateSubnet1.cidr_block ,aws_subnet.PrivateSubnet2.cidr_block]
 }
 resource "aws_security_group_rule" "allow-outgoing" {
     type = "egress"
@@ -71,5 +71,30 @@ resource "aws_security_group_rule" "allow-outgoing" {
     to_port = 0
     protocol = "-1"
     security_group_id = aws_security_group.rds-app-prod.id
+    cidr_blocks = ["0.0.0.0/0"]
+}
+
+resource "aws_security_group" "elasticcache-app" {
+  vpc_id = aws_vpc.terraformCourse.id
+  name = "elasticcache-app"
+  description = "Allow inbound redis traffic"
+  tags = {
+    Name = "elasticcache-app"
+  }
+}
+resource "aws_security_group_rule" "allow-redis" {
+    type = "ingress"
+    from_port = 6379
+    to_port = 6379
+    protocol = "tcp"
+    security_group_id = aws_security_group.elasticcache-app.id
+    cidr_blocks = [ aws_subnet.PrivateSubnet1.cidr_block ,aws_subnet.PrivateSubnet2.cidr_block]
+}
+resource "aws_security_group_rule" "allow-redis-outgoing" {
+    type = "egress"
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    security_group_id = aws_security_group.elasticcache-app.id
     cidr_blocks = ["0.0.0.0/0"]
 }

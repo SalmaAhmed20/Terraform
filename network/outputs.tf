@@ -22,3 +22,6 @@ output "RDSsg" {
 output "natt" {
   value=aws_nat_gateway.terraform-nat
 }
+output "Redissg" {
+  value = aws_security_group.elasticcache-app.id
+}
