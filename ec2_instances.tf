@@ -35,6 +35,11 @@ resource "aws_instance" "application" {
   ami           = var.AMI
   instance_type = var.INSTANCE_TYPE
   key_name      = "tf-key-pair"
+  depends_on = [module.networks.natt]
+  user_data = <<EOF
+  #!/bin/bash
+  sudo apt-get update -y && sudo apt install mysql-client -y
+  EOF
   network_interface {
     network_interface_id = aws_network_interface.privatenet.id
     device_index         = 0

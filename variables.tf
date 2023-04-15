@@ -35,3 +35,12 @@ variable "INSTANCE_TYPE" {
 variable "AMI" {
   type = string
 }
+variable "EMAIL" {
+  type = string
+  sensitive = true
+}
+variable "db_password" {
+  description = "RDS root user password"
+  type        = string
+  sensitive   = true
+}

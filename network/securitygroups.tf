@@ -48,3 +48,28 @@ resource "aws_security_group_rule" "sg2rule" {
   cidr_blocks       = [aws_vpc.terraformCourse.cidr_block]
   security_group_id = aws_security_group.security_group2.id
 }
+
+resource "aws_security_group" "rds-app-prod" {
+  vpc_id = aws_vpc.terraformCourse.id
+  name = "rds-app-prod"
+  description = "Allow inbound mysql traffic"
+  tags = {
+    Name = "rds-app-prod"
+  }
+}
+resource "aws_security_group_rule" "allow-mysql" {
+    type = "ingress"
+    from_port = 3306
+    to_port = 3306
+    protocol = "tcp"
+    security_group_id = aws_security_group.rds-app-prod.id
+    cidr_blocks = [ aws_subnet.PrivateSubnet1.cidr_block ]
+}
+resource "aws_security_group_rule" "allow-outgoing" {
+    type = "egress"
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    security_group_id = aws_security_group.rds-app-prod.id
+    cidr_blocks = ["0.0.0.0/0"]
+}

@@ -16,3 +16,9 @@ output "sgID1" {
 output "sgID2" {
   value = aws_security_group.security_group2.id
 }
+output "RDSsg" {
+  value = aws_security_group.rds-app-prod.id
+}
+output "natt" {
+  value=aws_nat_gateway.terraform-nat
+}
