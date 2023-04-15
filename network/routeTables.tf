@@ -32,12 +32,8 @@ resource "aws_route" "r" {
   destination_cidr_block = "0.0.0.0/0"
   gateway_id = aws_internet_gateway.gw.id
 }
-# resource "aws_route" "rnat" {
-#   route_table_id = aws_route_table.rtb_public.id
-#   destination_cidr_block = "0.0.0.0/0"
-#   nat_gateway_id = aws_nat_gateway.terraform-nat.id
-# }
-# resource "aws_route_table_association" "privr2" {
-#   route_table_id = aws_route_table.rtb_private.id
-#   nat_gateway_id  = aws_nat_gateway.terraform-nat.id
-# }
+resource "aws_route" "rnat" {
+  route_table_id = aws_route_table.rtb_private.id
+  destination_cidr_block = "0.0.0.0/0"
+  nat_gateway_id = aws_nat_gateway.terraform-nat.id
+}

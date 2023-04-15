@@ -11,26 +11,29 @@ resource "local_file" "tf-key" {
   filename = "tf-key-pair"
 }
 resource "aws_instance" "bastion" {
-  ami                         = "ami-09dd5f12915cfb387" # eu-west-1
-  instance_type               = "t2.micro"
+  ami                         = var.AMI
+  instance_type               = var.INSTANCE_TYPE
   key_name                    = "tf-key-pair"
-  subnet_id                   = aws_subnet.PublicSubnet1.id
+  subnet_id                   = module.networks.PubsubnetID1
   associate_public_ip_address = true
-  vpc_security_group_ids      = [aws_security_group.security_group1.id]
+  vpc_security_group_ids      = [module.networks.sgID1]
   tags = {
     Name = "bastion"
   }
+  provisioner "local-exec" {
+    command = "echo ${self.public_ip}"
+  }
 }
 resource "aws_network_interface" "privatenet" {
-  subnet_id       = aws_subnet.PrivateSubnet1.id
-  security_groups = [aws_security_group.security_group2.id]
+  subnet_id       = module.networks.PrivsubnetID1
+  security_groups = [module.networks.sgID2]
   tags = {
     Name = "private_network_interface"
   }
 }
 resource "aws_instance" "application" {
-  ami           = "ami-09dd5f12915cfb387" # eu-west-1
-  instance_type = "t2.micro"
+  ami           = var.AMI
+  instance_type = var.INSTANCE_TYPE
   key_name      = "tf-key-pair"
   network_interface {
     network_interface_id = aws_network_interface.privatenet.id
