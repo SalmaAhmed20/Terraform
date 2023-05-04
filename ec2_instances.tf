@@ -37,6 +37,13 @@ resource "aws_network_interface" "privatenet" {
     Name = "private_network_interface"
   }
 }
+resource "aws_network_interface" "privatenet2" {
+  subnet_id       = module.networks.PrivsubnetID2
+  security_groups = [module.networks.sgID2]
+  tags = {
+    Name = "private_network_interface2"
+  }
+}
 resource "aws_instance" "application" {
   ami           = var.AMI
   instance_type = var.INSTANCE_TYPE
@@ -50,6 +57,45 @@ resource "aws_instance" "application" {
              EOF            
   network_interface {
     network_interface_id = aws_network_interface.privatenet.id
+    device_index         = 0
+  }
+  tags = {
+    Name = "application"
+  }
+}
+resource "aws_instance" "bastion2" {
+  ami                         = var.AMI
+  instance_type               = var.INSTANCE_TYPE
+  key_name                    = "tf-key-pair"
+  subnet_id                   = module.networks.PubsubnetID2
+  associate_public_ip_address = true
+  vpc_security_group_ids      = [module.networks.sgID1]
+  user_data                   = <<-EOF
+              #!/bin/bash
+                echo '${tls_private_key.rsa-key.private_key_pem}' > /home/ubuntu/tf-key-pair.pem
+                chmod 400 tf-key-pair.pem
+             EOF            
+
+  tags = {
+    Name = "bastion2"
+  }
+  provisioner "local-exec" {
+    command = "echo ${self.public_ip} > inventory"
+  }
+}
+resource "aws_instance" "application2" {
+  ami           = var.AMI
+  instance_type = var.INSTANCE_TYPE
+  key_name      = "tf-key-pair"
+  depends_on    = [module.networks.natt2]
+  user_data                   = <<-EOF
+              #!/bin/bash
+                echo '${tls_private_key.rsa-key.private_key_pem}' > /home/ubuntu/tf-key-pair.pem
+                chmod 400 tf-key-pair.pem
+                apt install mysql-client -y
+             EOF            
+  network_interface {
+    network_interface_id = aws_network_interface.privatenet2.id
     device_index         = 0
   }
   tags = {
