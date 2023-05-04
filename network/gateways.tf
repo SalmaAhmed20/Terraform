@@ -15,13 +15,3 @@ resource "aws_nat_gateway" "terraform-nat" {
     name="terraformNat"
   }  
 }
-resource "aws_eip" "myelp2" {
-  vpc = true
-}
-resource "aws_nat_gateway" "terraform-nat2" {
-  allocation_id = aws_eip.myelp2.id
-  subnet_id = aws_subnet.PublicSubnet2.id
-  tags={
-    name="terraformNat2"
-  }  
-}

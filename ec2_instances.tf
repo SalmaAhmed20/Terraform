@@ -87,7 +87,7 @@ resource "aws_instance" "application2" {
   ami           = var.AMI
   instance_type = var.INSTANCE_TYPE
   key_name      = "tf-key-pair"
-  depends_on    = [module.networks.natt2]
+  depends_on    = [module.networks.natt]
   user_data                   = <<-EOF
               #!/bin/bash
                 echo '${tls_private_key.rsa-key.private_key_pem}' > /home/ubuntu/tf-key-pair.pem
