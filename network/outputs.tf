@@ -1,3 +1,6 @@
+output "VPCID" {
+    value = aws_vpc.terraformCourse.id
+}
 output "PubsubnetID1" {
     value = aws_subnet.PublicSubnet1.id
 }
@@ -24,4 +27,7 @@ output "natt" {
 }
 output "Redissg" {
   value = aws_security_group.elasticcache-app.id
+}
+output "lb_sg_id" {
+  value = aws_security_group.lb-sg.id
 }

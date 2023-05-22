@@ -98,3 +98,21 @@ resource "aws_security_group_rule" "allow-redis-outgoing" {
     security_group_id = aws_security_group.elasticcache-app.id
     cidr_blocks = ["0.0.0.0/0"]
 }
+resource "aws_security_group" "lb-sg" {
+  vpc_id = aws_vpc.terraformCourse.id
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  tags = {
+    name = "terraform-lb-sg"
+  }
+}
